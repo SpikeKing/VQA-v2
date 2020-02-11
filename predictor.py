@@ -84,6 +84,7 @@ class VideoPredictor(object):
 
         end = time.time()
         print('Time: {} s'.format(end - start))
+        return y_pred
 
 
 def video_predictor_test():

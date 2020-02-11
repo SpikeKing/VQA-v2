@@ -157,6 +157,7 @@ Temporary Items
 ACMMM_2019_supplementary_44/
 data/
 models/
+dataset/
 
 *.mp4
 *.zip
