@@ -39,6 +39,9 @@ class VideoPredictor(object):
         return model
 
     def get_feature(self, video_data):
+        """
+        获取视频特征
+        """
         video_length = video_data.shape[0]
         video_channel = video_data.shape[3]
         video_height = video_data.shape[1]
@@ -66,6 +69,7 @@ class VideoPredictor(object):
         """
         预测视频路径
         """
+        print('[Info] 视频路径: {}'.format(video_path))
         start = time.time()
 
         video_data = skvideo.io.vread(video_path)
