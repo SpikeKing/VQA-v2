@@ -5,16 +5,15 @@ Copyright (c) 2019. All rights reserved.
 Created by C. L. Wang on 2020/2/11
 """
 import os
-import torch
-from torchvision import transforms
-import skvideo.io
-from PIL import Image
-import numpy as np
-from VSFA import VSFA
-from CNNfeatures import get_features
-from argparse import ArgumentParser
 import time
 
+import skvideo.io
+import torch
+from PIL import Image
+from torchvision import transforms
+
+from CNNfeatures import get_features
+from VSFA import VSFA
 from root_dir import MODELS_DIR, ROOT_DIR
 
 
@@ -22,6 +21,7 @@ class VideoPredictor(object):
     def __init__(self):
         self.frame_batch_size = 32
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print('[Info] device: {}'.format(self.device))
         self.model_path = os.path.join(MODELS_DIR, 'VSFA.pt')
 
         self.model = self.init_model()
@@ -63,6 +63,7 @@ class VideoPredictor(object):
 
         features = get_features(transformed_video, frame_batch_size=self.frame_batch_size, device=self.device)
         features = torch.unsqueeze(features, 0)  # batch size 1
+
         return features
 
     def predict_path(self, video_path):
@@ -80,17 +81,20 @@ class VideoPredictor(object):
             input_length = features.shape[1] * torch.ones(1, 1)
             outputs = self.model(features, input_length)
             y_pred = outputs[0][0].to('cpu').numpy()
-            print("Predicted quality: {}".format(y_pred))
 
         end = time.time()
+
+        print("Predicted quality: {}".format(y_pred))
         print('Time: {} s'.format(end - start))
         return y_pred
 
 
 def video_predictor_test():
-    video_path = os.path.join(ROOT_DIR, 'test.mp4')
+    # video_path = os.path.join(ROOT_DIR, 'test.mp4')
+    video_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'positive', '303508511989705.mp4')
     vp = VideoPredictor()
     vp.predict_path(video_path)
+    print('[Info] 视频处理完成!')
 
 
 def main():
