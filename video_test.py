@@ -32,6 +32,7 @@ def video_test():
     out_dir = os.path.join(DATASET_DIR, 'outs')
     mkdir_if_not_exist(out_dir)
     out_excel_file = os.path.join(out_dir, 'res.xlsx')
+    print('[Info] 视频结果文件: {}'.format(out_excel_file))
 
     # add_sheet is used to create sheet.
     workbook = xlsxwriter.Workbook(out_excel_file)
