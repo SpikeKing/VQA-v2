@@ -66,6 +66,8 @@ def video_test():
 
     workbook.close()
 
+    print('[Info] 视频处理全部完成!')
+
 
 def main():
     video_test()
