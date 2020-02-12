@@ -58,6 +58,7 @@ def video_test():
         except Exception as e:
             print(e)
             print('[Info] 错误视频: {}'.format(name))
+        break
 
     workbook.close()
 
