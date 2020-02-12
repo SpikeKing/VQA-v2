@@ -75,6 +75,7 @@ class VideoPredictor(object):
         start = time.time()
 
         video_data = skvideo.io.vread(video_path)
+        print('[Info] video shape: {}'.format(video_data.shape))
 
         features = self.get_feature(video_data)
 
@@ -85,14 +86,14 @@ class VideoPredictor(object):
 
         end = time.time()
 
-        print("Predicted quality: {}".format(y_pred))
+        print('[Info] Predicted quality: {}'.format(y_pred))
         print('Time: {} s'.format(end - start))
         return y_pred
 
 
 def video_predictor_test():
     # video_path = os.path.join(ROOT_DIR, 'test.mp4')
-    video_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '6150198216234441.mp4')
+    video_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '1571698121771956.mp4')
     vp = VideoPredictor()
     vp.predict_path(video_path)
     print('[Info] 视频处理完成!')
