@@ -47,6 +47,7 @@ def video_test():
     worksheet.write(row, 1, u'视频评分')
     worksheet.write(row, 2, u'图像质量')
     worksheet.write(row, 3, u'图像美学')
+    worksheet.write(row, 4, u'综合评分')
     row += 1
 
     count = 0
@@ -56,10 +57,13 @@ def video_test():
             score_tech, score_aest = pwi.predict_video(path)
             print('[Info] 视频: {}, 视频评分: {}, 图像质量: {}, 图像美学: {}'.format(name, score, score_tech, score_aest))
 
+            score_final = score * 0.7 + score_tech * 0.2 + score_aest * 0.1  # 最终得分
+
             worksheet.write(row, 0, name)
             worksheet.write(row, 1, score)
             worksheet.write(row, 2, score_tech)
             worksheet.write(row, 3, score_aest)
+            worksheet.write(row, 4, score_final)
             row += 1
 
             count += 1
