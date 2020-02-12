@@ -70,6 +70,7 @@ class VideoPredictor(object):
         """
         预测视频路径
         """
+        print('-' * 50)
         print('[Info] 视频路径: {}'.format(video_path))
         start = time.time()
 
@@ -91,7 +92,7 @@ class VideoPredictor(object):
 
 def video_predictor_test():
     # video_path = os.path.join(ROOT_DIR, 'test.mp4')
-    video_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'positive', '303508511989705.mp4')
+    video_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '6150198216234441.mp4')
     vp = VideoPredictor()
     vp.predict_path(video_path)
     print('[Info] 视频处理完成!')
