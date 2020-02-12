@@ -9,8 +9,9 @@ import os
 
 import xlsxwriter
 
+from img_plugin.predictor_with_img import PredictorWithImage
 from predictor import VideoPredictor
-from root_dir import ROOT_DIR, DATASET_DIR
+from root_dir import DATASET_DIR
 from utils.project_utils import traverse_dir_files, mkdir_if_not_exist
 
 
@@ -28,6 +29,7 @@ def video_test():
     paths_list = paths_p_list + paths_n_list
 
     vp = VideoPredictor()
+    pwi = PredictorWithImage()
 
     out_dir = os.path.join(DATASET_DIR, 'outs')
     mkdir_if_not_exist(out_dir)
@@ -42,20 +44,22 @@ def video_test():
 
     print('[Info] 视频总数: {}'.format(len(names_list)))
     worksheet.write(row, 0, u'视频名称')
-    worksheet.write(row, 1, u'质量评分')
+    worksheet.write(row, 1, u'视频评分')
+    worksheet.write(row, 2, u'图像质量')
+    worksheet.write(row, 3, u'图像美学')
     row += 1
 
-    vid_list, score_list = [], []
     count = 0
     for name, path in zip(names_list, paths_list):
         try:
             score = vp.predict_path(path)
-            print('[Info] 视频: {}, 质量: {}'.format(name, score))
-            vid_list.append(name)
-            score_list.append(score)
+            score_tech, score_aest = pwi.predict_video(path)
+            print('[Info] 视频: {}, 视频评分: {}, 图像质量: {}, 图像美学: {}'.format(name, score, score_tech, score_aest))
 
             worksheet.write(row, 0, name)
             worksheet.write(row, 1, score)
+            worksheet.write(row, 2, score_tech)
+            worksheet.write(row, 3, score_aest)
             row += 1
 
             count += 1
