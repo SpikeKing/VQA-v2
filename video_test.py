@@ -46,6 +46,7 @@ def video_test():
     row += 1
 
     vid_list, score_list = [], []
+    count = 0
     for name, path in zip(names_list, paths_list):
         try:
             score = vp.predict_path(path)
@@ -56,10 +57,12 @@ def video_test():
             worksheet.write(row, 0, name)
             worksheet.write(row, 1, score)
             row += 1
+
+            count += 1
+            print('[Info] 已处理视频: {} / {}'.format(count, len(names_list)))
         except Exception as e:
             print(e)
             print('[Info] 错误视频: {}'.format(name))
-        break
 
     workbook.close()
 
