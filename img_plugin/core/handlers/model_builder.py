@@ -3,7 +3,7 @@ import importlib
 from keras.models import Model
 from keras.layers import Dropout, Dense
 from keras.optimizers import Adam
-from core.utils.losses import earth_movers_distance
+from img_plugin.core.utils.losses import earth_movers_distance
 
 
 class Nima:

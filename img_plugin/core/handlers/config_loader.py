@@ -1,5 +1,4 @@
-
-from src_code.utils.utils import load_json
+from img_plugin.core.utils.utils import load_json
 
 
 def load_config(config_file):

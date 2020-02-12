@@ -3,8 +3,9 @@ import numpy as np
 import keras
 
 import cv2
+
+from img_plugin.core.utils import utils
 from root_dir import ROOT_DIR
-from src_code.utils import utils
 
 
 class TrainDataGenerator(keras.utils.Sequence):
