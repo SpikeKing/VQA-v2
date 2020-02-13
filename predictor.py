@@ -60,8 +60,8 @@ class VideoPredictor(object):
         else:
             ratio = 1024 / video_height
 
-        width = video_width * ratio
-        height = video_height * ratio
+        width = int(video_width * ratio)
+        height = int(video_height * ratio)
 
         for frame_idx in range(video_length):
             frame = video_data[frame_idx]
