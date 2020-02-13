@@ -48,12 +48,6 @@ class VideoPredictor(object):
         video_height = video_data.shape[1]
         video_width = video_data.shape[2]
 
-        transformed_video = torch.zeros([video_length, video_channel, video_height, video_width])
-        transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
-
         # 修改为最大边1024尺寸
         if video_width > video_height:
             ratio = 1024 / video_width
@@ -62,6 +56,12 @@ class VideoPredictor(object):
 
         width = int(video_width * ratio)
         height = int(video_height * ratio)
+
+        transformed_video = torch.zeros([video_length, video_channel, height, width])
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
 
         for frame_idx in range(video_length):
             frame = video_data[frame_idx]
