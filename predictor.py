@@ -6,7 +6,8 @@ Created by C. L. Wang on 2020/2/11
 """
 import os
 import time
-
+import cv2
+import numpy as np
 import skvideo.io
 import torch
 from PIL import Image
@@ -24,15 +25,15 @@ class VideoPredictor(object):
         print('[Info] device: {}'.format(self.device))
         self.model_path = os.path.join(MODELS_DIR, 'VSFA.pt')
 
-        self.model = self.init_model()
+        self.model = self.init_model()  # 初始化模型
 
     def init_model(self):
         """
         初始化模型
         """
         model = VSFA()
-        # model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
-        model.load_state_dict(torch.load(self.model_path))
+        model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
+        # model.load_state_dict(torch.load(self.model_path))
         model.to(self.device)
         model.eval()
 
@@ -53,9 +54,21 @@ class VideoPredictor(object):
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
+        # 修改为最大边1024尺寸
+        if video_width > video_height:
+            ratio = 1024 / video_width
+        else:
+            ratio = 1024 / video_height
+
+        width = video_width * ratio
+        height = video_height * ratio
+
         for frame_idx in range(video_length):
             frame = video_data[frame_idx]
+
             frame = Image.fromarray(frame)
+            frame = frame.resize((width, height))  # 统一尺寸
+
             frame = transform(frame)
             transformed_video[frame_idx] = frame
 
@@ -87,13 +100,13 @@ class VideoPredictor(object):
         end = time.time()
 
         print('[Info] Predicted quality: {}'.format(y_pred))
-        print('Time: {} s'.format(end - start))
+        print('[Info] 预测耗时: {} s'.format(end - start))
         return y_pred
 
 
 def video_predictor_test():
     # video_path = os.path.join(ROOT_DIR, 'test.mp4')
-    video_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '1571698121771956.mp4')
+    video_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '1026569224421716.mp4')
     vp = VideoPredictor()
     vp.predict_path(video_path)
     print('[Info] 视频处理完成!')

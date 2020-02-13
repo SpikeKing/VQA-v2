@@ -9,7 +9,7 @@ import os
 
 import xlsxwriter
 
-from img_plugin.predictor_with_img import PredictorWithImage
+from img_plugins.img_blur import detect_vid_blur
 from predictor import VideoPredictor
 from root_dir import DATASET_DIR
 from utils.project_utils import traverse_dir_files, mkdir_if_not_exist
@@ -25,11 +25,12 @@ def video_test():
     paths_p_list, names_p_list = traverse_dir_files(vid_p_dir)
     paths_n_list, names_n_list = traverse_dir_files(vid_n_dir)
 
+    p_len, n_len = len(names_p_list), len(names_n_list)
+
     names_list = names_p_list + names_n_list
     paths_list = paths_p_list + paths_n_list
 
     vp = VideoPredictor()
-    pwi = PredictorWithImage()
 
     out_dir = os.path.join(DATASET_DIR, 'outs')
     mkdir_if_not_exist(out_dir)
@@ -45,32 +46,43 @@ def video_test():
     print('[Info] 视频总数: {}'.format(len(names_list)))
     worksheet.write(row, 0, u'视频名称')
     worksheet.write(row, 1, u'视频评分')
-    worksheet.write(row, 2, u'图像质量')
-    worksheet.write(row, 3, u'图像美学')
-    worksheet.write(row, 4, u'综合评分')
+    worksheet.write(row, 2, u'视频模糊')
+    worksheet.write(row, 3, u'FPS')
+    worksheet.write(row, 4, u'尺寸')
+    worksheet.write(row, 5, u'最终得分')
+    worksheet.write(row, 6, u'正负示例')
     row += 1
 
     count = 0
     for name, path in zip(names_list, paths_list):
         try:
             score = vp.predict_path(path)
-            score_tech, score_aest = pwi.predict_video(path)
-            print('[Info] 视频: {}, 视频评分: {}, 图像质量: {}, 图像美学: {}'.format(name, score, score_tech, score_aest))
+            print('[Info] 视频: {}, 视频评分: {}'.format(name, score))
 
-            score_final = score * 0.7 + score_tech * 0.2 + score_aest * 0.1  # 最终得分
+            v_blur, v_fps, v_wh = detect_vid_blur(path)
+
+            v_final = score * 0.50 + v_blur * 0.10 + v_fps * 0.15 + v_wh * 0.15  # 最终评分
 
             worksheet.write(row, 0, name)
             worksheet.write(row, 1, score)
-            worksheet.write(row, 2, score_tech)
-            worksheet.write(row, 3, score_aest)
-            worksheet.write(row, 4, score_final)
+            worksheet.write(row, 2, v_blur)
+            worksheet.write(row, 3, v_fps)
+            worksheet.write(row, 4, v_wh)
+            worksheet.write(row, 5, v_final)
+
+            if count < p_len:
+                worksheet.write(row, 6, "p")
+            else:
+                worksheet.write(row, 6, "n")
+
             row += 1
 
-            count += 1
-            print('[Info] 已处理视频: {} / {}'.format(count, len(names_list)))
         except Exception as e:
             print(e)
             print('[Info] 错误视频: {}'.format(name))
+
+        count += 1
+        print('[Info] 已处理视频: {} / {}'.format(count, len(names_list)))
 
     workbook.close()
 
