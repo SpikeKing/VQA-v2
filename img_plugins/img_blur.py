@@ -53,7 +53,7 @@ def detect_vid_blur(vid_path):
     """
     检测视频laplacian值
     """
-    print('[Info] ' + '-' * 50)
+    # print('[Info] ' + '-' * 50)
     vid_name = vid_path.split('/')[-1].split('.')[0]
     print('[Info] 视频路径: {}, 名称: {}'.format(vid_path, vid_name))
 
@@ -65,9 +65,9 @@ def detect_vid_blur(vid_path):
     h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     if w > h:
-        ratio = 1024 / w
+        ratio = float(1024. / w)
     else:
-        ratio = 1024 / h
+        ratio = float(1024. / h)
 
     print('[Info] 视频尺寸: {}, 帧率: {}'.format((h, w), fps))
 
