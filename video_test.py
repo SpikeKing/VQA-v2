@@ -55,31 +55,31 @@ def video_test():
 
     count = 0
     for name, path in zip(names_list, paths_list):
-        try:
-            score = vp.predict_path(path)
-            print('[Info] 视频: {}, 视频评分: {}'.format(name, score))
+        # try:
+        score = vp.predict_path(path)
+        print('[Info] 视频: {}, 视频评分: {}'.format(name, score))
 
-            v_blur, v_fps, v_wh = detect_vid_blur(path)
+        v_blur, v_fps, v_wh = detect_vid_blur(path)
 
-            v_final = score * 0.50 + v_blur * 0.10 + v_fps * 0.15 + v_wh * 0.15  # 最终评分
+        v_final = score * 0.50 + v_blur * 0.10 + v_fps * 0.15 + v_wh * 0.15  # 最终评分
 
-            worksheet.write(row, 0, name)
-            worksheet.write(row, 1, score)
-            worksheet.write(row, 2, v_blur)
-            worksheet.write(row, 3, v_fps)
-            worksheet.write(row, 4, v_wh)
-            worksheet.write(row, 5, v_final)
+        worksheet.write(row, 0, name)
+        worksheet.write(row, 1, score)
+        worksheet.write(row, 2, v_blur)
+        worksheet.write(row, 3, v_fps)
+        worksheet.write(row, 4, v_wh)
+        worksheet.write(row, 5, v_final)
 
-            if count < p_len:
-                worksheet.write(row, 6, "p")
-            else:
-                worksheet.write(row, 6, "n")
+        if count < p_len:
+            worksheet.write(row, 6, "p")
+        else:
+            worksheet.write(row, 6, "n")
 
-            row += 1
+        row += 1
 
-        except Exception as e:
-            print(e)
-            print('[Info] 错误视频: {}'.format(name))
+        # except Exception as e:
+        #     print(e)
+        #     print('[Info] 错误视频: {}'.format(name))
 
         count += 1
         print('[Info] 已处理视频: {} / {}'.format(count, len(names_list)))
