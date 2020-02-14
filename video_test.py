@@ -55,6 +55,7 @@ def video_test():
 
     count = 0
     for name, path in zip(names_list, paths_list):
+        print('-' * 50)
         final_val, vq, nb, nf, nz = vp.predict_video_detail(path)
         print('[Info] 视频: {}, 视频评分: {}'.format(name, final_val))
 
