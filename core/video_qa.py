@@ -71,7 +71,7 @@ class VideoQualityAssessment(object):
         video_width = video_data.shape[2]
 
         height, width = self.unify_size(video_height, video_width)  # 统一视频帧的尺寸
-        print('[Info] 统一尺寸: {}'.format(height, width))
+        print('[Info] 统一尺寸: {}, {}'.format(height, width))
 
         transformed_video = torch.zeros([video_length, video_channel, height, width])
         transform = transforms.Compose([
