@@ -22,3 +22,13 @@ def avg_list(x_list):
     x_np = np.array(x_list)
     avg = np.average(x_np)
     return avg
+
+
+def sigmoid_thr(val, thr, gap):
+    """
+    数值归一化
+    """
+    x = val - thr
+    x = x / gap
+    sig = 1 / (1 + np.exp(x * -1))
+    return round(sig, 3)  # 保留3位

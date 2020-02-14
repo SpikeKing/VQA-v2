@@ -6,8 +6,7 @@ Created by C. L. Wang on 2020/2/11
 """
 import os
 import time
-import cv2
-import numpy as np
+
 import skvideo.io
 import torch
 from PIL import Image
@@ -18,12 +17,20 @@ from VSFA import VSFA
 from root_dir import MODELS_DIR, ROOT_DIR
 
 
-class VideoPredictor(object):
+class VideoQualityAssessment(object):
+    """
+    视频整体的质量评估
+    """
+
     def __init__(self):
-        self.frame_batch_size = 32
+        self.model_path = os.path.join(MODELS_DIR, 'VSFA.pt')  # 模型路径
+
+        self.frame_batch_size = 32  # batch_size
+        self.std_size = 1024  # 视频图像尺寸
+
+        # CPU和GPU
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print('[Info] device: {}'.format(self.device))
-        self.model_path = os.path.join(MODELS_DIR, 'VSFA.pt')
 
         self.model = self.init_model()  # 初始化模型
 
@@ -39,6 +46,21 @@ class VideoPredictor(object):
 
         return model
 
+    def unify_size(self, video_height, video_width):
+        """
+        统一最长边的尺寸
+        """
+        # 最长边修改为标准尺寸
+        if video_width > video_height:
+            ratio = self.std_size / video_width
+        else:
+            ratio = self.std_size / video_height
+
+        height = int(video_height * ratio)
+        width = int(video_width * ratio)
+
+        return height, width
+
     def get_feature(self, video_data):
         """
         获取视频特征
@@ -48,14 +70,7 @@ class VideoPredictor(object):
         video_height = video_data.shape[1]
         video_width = video_data.shape[2]
 
-        # 修改为最大边1024尺寸
-        if video_width > video_height:
-            ratio = 1024 / video_width
-        else:
-            ratio = 1024 / video_height
-
-        width = int(video_width * ratio)
-        height = int(video_height * ratio)
+        height, width = self.unify_size(video_height, video_width)  # 统一视频帧的尺寸
 
         transformed_video = torch.zeros([video_length, video_channel, height, width])
         transform = transforms.Compose([
@@ -72,7 +87,7 @@ class VideoPredictor(object):
             frame = transform(frame)
             transformed_video[frame_idx] = frame
 
-        print('Video length: {}'.format(transformed_video.shape[0]))
+        print('[Info] Video length: {}'.format(transformed_video.shape[0]))
 
         features = get_features(transformed_video, frame_batch_size=self.frame_batch_size, device=self.device)
         features = torch.unsqueeze(features, 0)  # batch size 1
@@ -83,12 +98,11 @@ class VideoPredictor(object):
         """
         预测视频路径
         """
-        print('-' * 50)
         print('[Info] 视频路径: {}'.format(video_path))
         start = time.time()
 
         video_data = skvideo.io.vread(video_path)
-        print('[Info] video shape: {}'.format(video_data.shape))
+        print('[Info] 视频尺寸: {}'.format(video_data.shape))
 
         features = self.get_feature(video_data)
 
@@ -99,16 +113,16 @@ class VideoPredictor(object):
 
         end = time.time()
 
-        print('[Info] Predicted quality: {}'.format(y_pred))
+        print('[Info] 预测的视频质量: {}'.format(y_pred))
         print('[Info] 预测耗时: {} s'.format(end - start))
         return y_pred
 
 
 def video_predictor_test():
     # video_path = os.path.join(ROOT_DIR, 'test.mp4')
-    video_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '1026569224421716.mp4')
-    vp = VideoPredictor()
-    vp.predict_path(video_path)
+    vid_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '1026569224421716.mp4')
+    vqa = VideoQualityAssessment()
+    vqa.predict_path(vid_path)
     print('[Info] 视频处理完成!')
 
 
