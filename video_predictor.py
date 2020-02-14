@@ -21,12 +21,16 @@ class VideoPredictor(object):
         self.vqa = VideoQualityAssessment()
 
     def predict_video(self, vid_path):
+        final_val, _, _, _, _ = self.predict_video_detail(vid_path)
+        return final_val
+
+    def predict_video_detail(self, vid_path):
         nb, nf, nz = self.sqa.predict_video(vid_path)
         vq = self.vqa.predict_path(vid_path)
 
         # 最终得分
         final_val = vq * 0.85 + nb * 0.05 + nf * 0.05 + nz * 0.05
-        return final_val
+        return final_val, vq, nb, nf, nz
 
 
 def main():

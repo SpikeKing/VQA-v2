@@ -9,10 +9,10 @@ import os
 
 import xlsxwriter
 
-from img_plugins.img_blur import detect_vid_blur
-from predictor import VideoPredictor
-from root_dir import DATASET_DIR
 from utils.project_utils import traverse_dir_files, mkdir_if_not_exist
+from video_predictor import VideoPredictor
+
+from root_dir import DATASET_DIR
 
 
 def video_test():
@@ -55,20 +55,15 @@ def video_test():
 
     count = 0
     for name, path in zip(names_list, paths_list):
-        # try:
-        score = vp.predict_path(path)
-        print('[Info] 视频: {}, 视频评分: {}'.format(name, score))
-
-        v_blur, v_fps, v_wh = detect_vid_blur(path)
-
-        v_final = score * 0.50 + v_blur * 0.10 + v_fps * 0.15 + v_wh * 0.15  # 最终评分
+        final_val, vq, nb, nf, nz = vp.predict_video_detail(path)
+        print('[Info] 视频: {}, 视频评分: {}'.format(name, final_val))
 
         worksheet.write(row, 0, name)
-        worksheet.write(row, 1, score)
-        worksheet.write(row, 2, v_blur)
-        worksheet.write(row, 3, v_fps)
-        worksheet.write(row, 4, v_wh)
-        worksheet.write(row, 5, v_final)
+        worksheet.write(row, 1, vq)
+        worksheet.write(row, 2, nb)
+        worksheet.write(row, 3, nf)
+        worksheet.write(row, 4, nz)
+        worksheet.write(row, 5, final_val)
 
         if count < p_len:
             worksheet.write(row, 6, "p")
@@ -76,10 +71,6 @@ def video_test():
             worksheet.write(row, 6, "n")
 
         row += 1
-
-        # except Exception as e:
-        #     print(e)
-        #     print('[Info] 错误视频: {}'.format(name))
 
         count += 1
         print('[Info] 已处理视频: {} / {}'.format(count, len(names_list)))
