@@ -56,7 +56,13 @@ def video_test():
     count = 0
     for name, path in zip(names_list, paths_list):
         print('-' * 50)
-        final_val, vq, nb, nf, nz = vp.predict_video_detail(path)
+        
+        try:
+            final_val, vq, nb, nf, nz = vp.predict_video_detail(path)
+        except Exception as e:
+            print('[Info] 异常视频: {}'.format(path))
+            continue
+
         print('[Info] 视频: {}, 视频评分: {}'.format(name, final_val))
 
         worksheet.write(row, 0, name)
