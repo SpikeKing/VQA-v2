@@ -79,6 +79,7 @@ class VideoQualityAssessment(object):
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
+        print('[Info] 视频长度: {}'.format(video_length))
         for frame_idx in range(video_length):
             frame = video_data[frame_idx]
 
@@ -87,6 +88,9 @@ class VideoQualityAssessment(object):
 
             frame = transform(frame)
             transformed_video[frame_idx] = frame
+
+            if frame_idx % 100 == 0:
+                print('[Info] 处理帧数: {}'.format(frame_idx))
 
         print('[Info] Video length: {}'.format(transformed_video.shape[0]))
 
