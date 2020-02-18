@@ -62,7 +62,7 @@ class StandardQualityAssessment(object):
 
         return s
 
-    def predict_video(self, vid_path):
+    def predict_vid(self, vid_path):
         """
         视频质量值
         """
@@ -105,7 +105,7 @@ def main():
     v_path = os.path.join(DATASET_DIR, 'videos', 'negative', '985394418127560.mp4')
 
     sqa = StandardQualityAssessment()
-    nb, nf, nz = sqa.predict_video(v_path)
+    nb, nf, nz = sqa.predict_vid(v_path)
 
     print('[Info] 模糊值: {}, FPS值: {}, 尺寸值: {}'.format(nb, nf, nz))
 

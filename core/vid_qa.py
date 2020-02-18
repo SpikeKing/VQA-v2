@@ -39,8 +39,8 @@ class VideoQualityAssessment(object):
         初始化模型
         """
         model = VSFA()
-        # model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
-        model.load_state_dict(torch.load(self.model_path))
+        model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
+        # model.load_state_dict(torch.load(self.model_path))
         model.to(self.device)
         model.eval()
 
@@ -99,7 +99,7 @@ class VideoQualityAssessment(object):
 
         return features
 
-    def predict_path(self, video_path):
+    def predict_vid(self, video_path):
         """
         预测视频路径
         """
@@ -127,7 +127,7 @@ def video_predictor_test():
     # video_path = os.path.join(ROOT_DIR, 'test.mp4')
     vid_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '1026569224421716.mp4')
     vqa = VideoQualityAssessment()
-    vqa.predict_path(vid_path)
+    vqa.predict_vid(vid_path)
     print('[Info] 视频处理完成!')
 
 
