@@ -5,15 +5,15 @@ Copyright (c) 2019. All rights reserved.
 Created by C. L. Wang on 2020/2/18
 """
 import os
-import cv2
 
+import cv2
 import torch
-from PIL import Image
 import torchvision.models as models
 import torchvision.transforms as transforms
+from PIL import Image
 
 from core.img_core.model import IQAModel
-from root_dir import DATA_DIR, DATASET_DIR
+from root_dir import DATASET_DIR, MODELS_DIR
 
 
 class ImgQualityAssessment(object):
@@ -22,7 +22,7 @@ class ImgQualityAssessment(object):
     """
 
     def __init__(self):
-        self.model_path = os.path.join(DATA_DIR, 'models', 'epoch-57.pkl')
+        self.model_path = os.path.join(MODELS_DIR, 'epoch-57.pkl')
         self.model, self.device = self.init_model()
         self.test_transform = self.get_test_transform()
 
