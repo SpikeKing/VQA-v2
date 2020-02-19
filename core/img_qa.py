@@ -49,10 +49,11 @@ class ImgQualityAssessment(object):
         ])
         return test_transform
 
-    def predict_img(self, imt):
+    def predict_img(self, img_pil):
         """
         预测图像
         """
+        imt = self.test_transform(img_pil)
         imt = imt.unsqueeze(dim=0)
         imt = imt.to(self.device)
         with torch.no_grad():
@@ -115,7 +116,7 @@ def main():
 
     img_path = os.path.join(DATASET_DIR, 'imgs', 'landscape.jpg')
     print('[Info] 图像路径: {}'.format(img_path))
-    mean, std = iqa.predict_img(img_path)
+    mean, std = iqa.predict_img_path(img_path)
     print('[Info] 均值: {}, 方差: {}'.format(mean, std))
 
 

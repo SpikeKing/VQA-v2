@@ -12,7 +12,7 @@ import torch
 from PIL import Image
 from torchvision import transforms
 
-from CNNfeatures import get_features
+from CNNfeatures import get_features, ResNet50
 from VSFA import VSFA
 from root_dir import MODELS_DIR, ROOT_DIR
 
@@ -32,7 +32,7 @@ class VideoQualityAssessment(object):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print('[Info] device: {}'.format(self.device))
 
-        self.model = self.init_model()  # 初始化模型
+        self.model, self.feature_model = self.init_model()  # 初始化模型
 
     def init_model(self):
         """
@@ -44,7 +44,11 @@ class VideoQualityAssessment(object):
         model.to(self.device)
         model.eval()
 
-        return model
+        rn50_model = ResNet50()
+        rn50_model.to(self.device)
+        rn50_model.eval()
+
+        return model, rn50_model
 
     def unify_size(self, video_height, video_width):
         """
@@ -89,12 +93,14 @@ class VideoQualityAssessment(object):
             frame = transform(frame)
             transformed_video[frame_idx] = frame
 
-            if frame_idx % 100 == 0:
+            if frame_idx % 200 == 0:
                 print('[Info] 处理帧数: {}'.format(frame_idx))
 
         print('[Info] Video length: {}'.format(transformed_video.shape[0]))
 
-        features = get_features(transformed_video, frame_batch_size=self.frame_batch_size, device=self.device)
+        features = get_features(transformed_video, self.feature_model,
+                                frame_batch_size=self.frame_batch_size,
+                                device=self.device)
         features = torch.unsqueeze(features, 0)  # batch size 1
 
         return features
@@ -109,13 +115,16 @@ class VideoQualityAssessment(object):
         video_data = skvideo.io.vread(video_path)
         print('[Info] 视频尺寸: {}'.format(video_data.shape))
 
+        print('[Info] 特征提取开始!')
         features = self.get_feature(video_data)
+        print('[Info] 特征提取结束!')
 
+        print('[Info] 视频预测中')
         with torch.no_grad():
             input_length = features.shape[1] * torch.ones(1, 1)
             outputs = self.model(features, input_length)
             y_pred = outputs[0][0].to('cpu').numpy()
-
+        print('[Info] 视频预测完成!')
         end = time.time()
 
         print('[Info] 预测的视频质量: {}'.format(y_pred))
