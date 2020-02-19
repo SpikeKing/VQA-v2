@@ -54,6 +54,7 @@ class ImgQualityAssessment(object):
         预测图像
         """
         imt = self.test_transform(img_pil)
+
         imt = imt.unsqueeze(dim=0)
         imt = imt.to(self.device)
         with torch.no_grad():

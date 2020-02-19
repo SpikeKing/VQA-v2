@@ -62,7 +62,7 @@ def video_test():
         try:
             final_val, vq, nb, nf, nz, nm, ns = vp.predict_vid_detail(path)
         except Exception as e:
-            print('[Info] 异常视频: {}'.format(path))
+            print('[Warning] 异常视频: {}'.format(path))
             continue
 
         print('[Info] 视频: {}, 视频评分: {}'.format(name, final_val))
