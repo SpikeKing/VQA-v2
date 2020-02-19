@@ -149,7 +149,8 @@ if __name__ == "__main__":
     if args.database == 'KoNViD-1k':
         videos_dir = '/home/ldq/Downloads/KoNViD-1k/'  # videos dir
         features_dir = 'CNN_features_KoNViD-1k/'  # features dir
-        datainfo = 'data/KoNViD-1kinfo.mat'  # database info: video_names, scores; video format, width, height, index, ref_ids, max_len, etc.
+        # database info: video_names, scores; video format, width, height, index, ref_ids, max_len, etc.
+        datainfo = 'data/KoNViD-1kinfo.mat'
     if args.database == 'CVD2014':
         videos_dir = '/media/ldq/Research/Data/CVD2014/'
         features_dir = 'CNN_features_CVD2014/'
