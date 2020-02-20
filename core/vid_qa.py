@@ -7,7 +7,7 @@ Created by C. L. Wang on 2020/2/11
 import os
 import time
 
-import skvideo.io
+import cv2
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -65,27 +65,37 @@ class VideoQualityAssessment(object):
 
         return height, width
 
-    def get_feature(self, video_data):
+    def predict_vid(self, vid_path):
         """
-        获取视频特征
+        预测视频路径
         """
-        video_length = video_data.shape[0]
-        video_channel = video_data.shape[3]
-        video_height = video_data.shape[1]
-        video_width = video_data.shape[2]
+        print('[Info] 视频路径: {}'.format(vid_path))
+        start = time.time()
 
-        height, width = self.unify_size(video_height, video_width)  # 统一视频帧的尺寸
+        cap = cv2.VideoCapture(vid_path)
+        vid_len = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = int(cap.get(cv2.CAP_PROP_FPS))  # 26
+
+        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        print('[Info] 视频尺寸 宽: {}, 高: {}'.format(w, h))
+
+        print('[Info] 特征提取开始!')
+        # features = self.get_feature(video_data)
+        height, width = self.unify_size(h, w)  # 统一视频帧的尺寸
         print('[Info] 统一尺寸: {}, {}'.format(height, width))
 
-        transformed_video = torch.zeros([video_length, video_channel, height, width])
+        transformed_video = torch.zeros([vid_len, 3, height, width])
         transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
-        print('[Info] 视频长度: {}'.format(video_length))
-        for frame_idx in range(0, video_length, 20):
-            frame = video_data[frame_idx]
+        print('[Info] 视频长度: {}'.format(vid_len))
+        for frame_idx in range(0, vid_len, 20):
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+            ret, frame = cap.read()
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             frame = Image.fromarray(frame)
             frame = frame.resize((width, height))  # 统一尺寸
@@ -102,21 +112,6 @@ class VideoQualityAssessment(object):
                                 frame_batch_size=self.frame_batch_size,
                                 device=self.device)
         features = torch.unsqueeze(features, 0)  # batch size 1
-
-        return features
-
-    def predict_vid(self, video_path):
-        """
-        预测视频路径
-        """
-        print('[Info] 视频路径: {}'.format(video_path))
-        start = time.time()
-
-        video_data = skvideo.io.vread(video_path)
-        print('[Info] 视频尺寸: {}'.format(video_data.shape))
-
-        print('[Info] 特征提取开始!')
-        features = self.get_feature(video_data)
         print('[Info] 特征提取结束!')
 
         print('[Info] 视频预测中')
