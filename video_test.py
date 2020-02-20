@@ -96,7 +96,8 @@ def video_test():
 
 
 def main():
-    videos_test()
+    video_test()  # 处理单个视频
+    # videos_test()  # 处理多个视频
 
 
 if __name__ == '__main__':
