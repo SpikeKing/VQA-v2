@@ -39,8 +39,8 @@ class VideoQualityAssessment(object):
         初始化模型
         """
         model = VSFA()
-        model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
-        # model.load_state_dict(torch.load(self.model_path))
+        # model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
+        model.load_state_dict(torch.load(self.model_path))
         model.to(self.device)
         model.eval()
 
