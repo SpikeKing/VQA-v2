@@ -14,7 +14,7 @@ from torchvision import transforms
 
 from CNNfeatures import get_features, ResNet50
 from VSFA import VSFA
-from root_dir import MODELS_DIR, ROOT_DIR
+from root_dir import MODELS_DIR, ROOT_DIR, DATA_DIR
 
 
 class VideoQualityAssessment(object):
@@ -23,7 +23,7 @@ class VideoQualityAssessment(object):
     """
 
     def __init__(self):
-        self.model_path = os.path.join(MODELS_DIR, 'VSFA.pt')  # 模型路径
+        self.model_path = os.path.join(MODELS_DIR, 'vqa_model.pt')  # 模型路径
 
         self.frame_batch_size = 32  # batch_size
         self.std_size = 1024  # 视频图像尺寸
@@ -39,8 +39,11 @@ class VideoQualityAssessment(object):
         初始化模型
         """
         model = VSFA()
-        # model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
-        model.load_state_dict(torch.load(self.model_path))
+        if torch.cuda.is_available():
+            model.load_state_dict(torch.load(self.model_path))
+        else:
+            model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
+
         model.to(self.device)
         model.eval()
 
@@ -129,7 +132,7 @@ class VideoQualityAssessment(object):
 
 def video_predictor_test():
     # video_path = os.path.join(ROOT_DIR, 'test.mp4')
-    vid_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '1026569224421716.mp4')
+    vid_path = os.path.join(DATA_DIR, 'videos', 'negative', '1026569224421716.mp4')
     vqa = VideoQualityAssessment()
     vqa.predict_vid(vid_path)
     print('[Info] 视频处理完成!')

@@ -12,7 +12,7 @@ import xlsxwriter
 from utils.project_utils import traverse_dir_files, mkdir_if_not_exist
 from video_predictor import VideoPredictor
 
-from root_dir import DATASET_DIR, ROOT_DIR
+from root_dir import DATASET_DIR, ROOT_DIR, DATA_DIR
 
 
 def videos_test():
@@ -88,7 +88,7 @@ def videos_test():
 
 
 def video_test():
-    vid_path = os.path.join(ROOT_DIR, 'dataset', 'videos', 'negative', '1026569224421716.mp4')
+    vid_path = os.path.join(DATA_DIR, 'videos', 'positive', '1341951001272312.mp4')
     vp = VideoPredictor()
     final_val = vp.predict_vid(vid_path)
     print('[Info] 视频质量: {}'.format(final_val))
