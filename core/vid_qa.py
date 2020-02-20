@@ -92,7 +92,7 @@ class VideoQualityAssessment(object):
         ])
 
         print('[Info] 视频长度: {}'.format(vid_len))
-        for frame_idx in range(0, vid_len, 20):
+        for frame_idx in range(vid_len):
             cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
             ret, frame = cap.read()
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
