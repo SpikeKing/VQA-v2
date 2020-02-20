@@ -49,10 +49,8 @@ def video_test():
     worksheet.write(row, 2, u'视频模糊')
     worksheet.write(row, 3, u'FPS')
     worksheet.write(row, 4, u'尺寸')
-    worksheet.write(row, 5, u'帧质量均值')
-    worksheet.write(row, 6, u'帧质量方差')
-    worksheet.write(row, 7, u'最终得分')
-    worksheet.write(row, 8, u'正负示例')
+    worksheet.write(row, 5, u'最终得分')
+    worksheet.write(row, 6, u'正负示例')
     row += 1
 
     count = 0
@@ -72,14 +70,12 @@ def video_test():
         worksheet.write(row, 2, nb)
         worksheet.write(row, 3, nf)
         worksheet.write(row, 4, nz)
-        worksheet.write(row, 5, nm)
-        worksheet.write(row, 6, ns)
-        worksheet.write(row, 7, final_val)
+        worksheet.write(row, 5, final_val)
 
         if count < p_len:
-            worksheet.write(row, 8, "p")
+            worksheet.write(row, 6, "p")
         else:
-            worksheet.write(row, 8, "n")
+            worksheet.write(row, 6, "n")
 
         row += 1
 

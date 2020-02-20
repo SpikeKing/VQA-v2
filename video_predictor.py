@@ -6,10 +6,8 @@ Created by C. L. Wang on 2020/2/14
 """
 import os
 
-from core.img_qa import ImgQualityAssessment
 from core.std_qa import StandardQualityAssessment
 from core.vid_qa import VideoQualityAssessment
-
 from root_dir import ROOT_DIR
 
 
@@ -21,22 +19,21 @@ class VideoPredictor(object):
     def __init__(self):
         self.sqa = StandardQualityAssessment()
         self.vqa = VideoQualityAssessment()
-        self.iqa = ImgQualityAssessment()
+        # self.iqa = ImgQualityAssessment()
 
     def predict_vid(self, vid_path):
-        final_val, _, _, _, _, _, _ = self.predict_vid_detail(vid_path)
+        final_val, _, _, _, _ = self.predict_vid_detail(vid_path)
         return final_val
 
     def predict_vid_detail(self, vid_path):
         vq = self.vqa.predict_vid(vid_path)
-
         nb, nf, nz = self.sqa.predict_vid(vid_path)
 
-        nm, ns = self.iqa.predict_vid(vid_path)
+        # nm, ns = self.iqa.predict_vid(vid_path)
 
         # 最终得分
-        final_val = vq * 0.70 + nb * 0.05 + nf * 0.10 + nz * 0.05 + nm * 0.08 + ns * 0.02
-        return final_val, vq, nb, nf, nz, nm, ns
+        final_val = vq * 0.80 + nb * 0.05 + nf * 0.10 + nz * 0.05
+        return final_val, vq, nb, nf, nz
 
 
 def main():

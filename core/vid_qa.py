@@ -26,7 +26,7 @@ class VideoQualityAssessment(object):
         self.model_path = os.path.join(MODELS_DIR, 'VSFA.pt')  # 模型路径
 
         self.frame_batch_size = 32  # batch_size
-        self.std_size = 512  # 视频图像尺寸
+        self.std_size = 1024  # 视频图像尺寸
 
         # CPU和GPU
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -84,7 +84,7 @@ class VideoQualityAssessment(object):
         ])
 
         print('[Info] 视频长度: {}'.format(video_length))
-        for frame_idx in range(video_length):
+        for frame_idx in range(0, video_length, 20):
             frame = video_data[frame_idx]
 
             frame = Image.fromarray(frame)

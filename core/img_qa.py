@@ -16,9 +16,10 @@ from core.img_core.model import IQAModel
 from root_dir import DATASET_DIR, MODELS_DIR
 
 
+@DeprecationWarning
 class ImgQualityAssessment(object):
     """
-    图像质量评估
+    图像质量评估，目前效果较差
     """
 
     def __init__(self):

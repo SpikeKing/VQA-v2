@@ -38,6 +38,7 @@ class VideoDataset(Dataset):
 
     def __getitem__(self, idx):
         video_name = self.video_names[idx]
+
         assert self.format == 'YUV420' or self.format == 'RGB'
         if self.format == 'YUV420':
             video_data = skvideo.io.vread(os.path.join(self.videos_dir, video_name), self.height, self.width,
@@ -55,7 +56,9 @@ class VideoDataset(Dataset):
         video_channel = video_data.shape[3]
         video_height = video_data.shape[1]
         video_width = video_data.shape[2]
+
         transformed_video = torch.zeros([video_length, video_channel, video_height, video_width])
+
         for frame_idx in range(video_length):
             frame = video_data[frame_idx]
             frame = Image.fromarray(frame)
